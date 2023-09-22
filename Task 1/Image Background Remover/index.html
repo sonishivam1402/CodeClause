@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Background Remover</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <div class="form-group">
+                    <label for="filepicker">Select a file: </label>
+                    <input class="form-control" id="filepicker" type="file">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="handleUpload()" type="button">Upload</button>
+                    <button class="btn btn-secondary" onclick="downloadFile()">Download</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+
+    <script>
+        let imageURL;
+        function handleUpload(){
+            const fileInput = document.getElementById('filepicker');
+            const image = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append("image_file",image);
+            formData.append('size','auto');
+
+            const apiKey = "khHnGjMiNQzFY3qGHFbSfy7J"
+            fetch('https://api.remove.bg/v1.0/removebg',{
+                method:'POST',
+                headers:{
+                    'X-Api-Key': apiKey,
+                },
+                body: formData
+            })
+            .then(function(response){
+                return response.blob();
+            })
+            .then(function(blob){
+                console.log(blob);
+                const url = URL.createObjectURL(blob);
+                imageURL = url;
+                const img = document.createElement('img');
+                img.src = url;
+                document.body.appendChild(img);
+            })
+            .catch();
+
+            console.log("clicked");
+        }
+
+        function downloadFile(){
+            var anchorElement = document.createElement('a');
+            anchorElement.href = imageURL;
+            anchorElement.download = 'no-bg.png';
+            document.body.appendChild(anchorElement);
+            anchorElement.click();
+            document.body.removeChild(a)
+        }
+    </script>
+</body>
+</html>
